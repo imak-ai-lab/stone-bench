@@ -1,0 +1,14 @@
+model:
+  name: tiled-owlv2-sam-obb
+  model_id: google/owlv2-large-patch14-ensemble
+  sam_model_id: facebook/sam2.1-hiera-large
+  sam_weights: weights/sam2.1_hiera_large.pt
+  device: cuda
+  labels: ["stone"]
+  confidence_threshold: 0.20
+  tile_size: 1024
+  tile_overlap: 256
+  nms_iou_threshold: 0.50
+  nms_class_aware: true
+output:
+  root: results/predictions/tiled_owlv2_large_sam21_l

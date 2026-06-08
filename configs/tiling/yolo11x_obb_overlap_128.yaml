@@ -1,0 +1,5 @@
+inherits: configs/tiling/yolo11x_obb_overlap_0.yaml
+tiling:
+  tile_overlap: 128
+output:
+  root: outputs/supervised_tiled_benchmark/yolo11x_obb_overlap_128

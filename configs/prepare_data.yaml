@@ -1,0 +1,76 @@
+output:
+  root: ../data/prepared/stonebench
+  copy_mode: hardlink
+  formats:
+    - yolo_obb
+    - yolo_detect
+    - yolo_seg
+    - coco_detect
+    - coco_seg
+
+split:
+  mode: preserve
+  val_fraction: 0.20
+  seed: 42
+  combined_slug: all_real_plus_synthetic_train
+  synthetic_datasets:
+    - synthetic
+
+dataset:
+  names:
+    - stone
+  sources:
+    - name: open_pits
+      type: yolo_segmentation
+      path: ../data/raw/extracted/open_pits
+
+    - name: rocks_asbest
+      type: yolo_segmentation
+      path: ../data/raw/extracted/rocks_asbest
+
+    - name: rocks_uav
+      type: yolo_segmentation
+      path: ../data/raw/extracted/rocks_uav
+
+    - name: rock_blasting
+      type: coco_segmentation
+      path: ../data/raw/extracted/rock_blasting
+      class_id_map:
+        1: 0
+
+    - name: mask_2018
+      type: coco_segmentation
+      path: ../data/raw/extracted/mask_2018
+      class_id_map:
+        1: 0
+
+    - name: bucket_excavation
+      type: yolo_segmentation
+      path: ../data/raw/extracted/bucket_excavation
+
+    - name: 40_70mm
+      type: yolo_segmentation
+      path: ../data/raw/extracted/40_70mm
+
+    - name: unloading_wagon
+      type: yolo_segmentation
+      path: ../data/raw/extracted/unloading_wagon
+
+    - name: transport
+      type: yolo_segmentation
+      path: ../data/raw/extracted/transport
+
+    - name: ronveer
+      type: yolo_segmentation
+      path: ../data/raw/extracted/ronveer
+
+    - name: sam_fragment_v7
+      type: coco_segmentation
+      path: ../data/raw/extracted/sam_fragment_v7
+      class_id_map:
+        1: 0
+
+    - name: synthetic
+      type: yolo_segmentation
+      path: ../data/raw/extracted/synthetic
+      synthetic: true

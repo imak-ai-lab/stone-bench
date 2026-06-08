@@ -1,0 +1,20 @@
+model:
+  family: rtdetr
+  model_id: rtdetr-x.pt
+  label_format: yolo_detect
+training:
+  epochs: 30
+  imgsz: 1024
+  batch: 2
+  seed: 42
+  patience: 10
+  amp: true
+  device: cuda
+data:
+  prepared_root: data/prepared/stonebench/yolo_detect
+  scope: combined
+  combined_slug: all_real_plus_synthetic_train
+  source_annotations: "AABB derived from OBB labels"
+  synthetic_train_only: true
+output:
+  root: outputs/supervised_benchmark/rtdetr_x

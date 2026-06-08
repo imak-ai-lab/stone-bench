@@ -1,0 +1,8 @@
+model:
+  name: detic-obb
+  model_id: Detic_SwinB_LCOCOI21k
+  device: cuda
+  confidence_threshold: 0.30
+  labels: ["stone", "rock", "rock fragment", "stone fragment", "gravel", "ore fragment", "aggregate"]
+output:
+  root: results/predictions/detic_swinb

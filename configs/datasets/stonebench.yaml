@@ -1,0 +1,22 @@
+dataset:
+  name: stonebench
+  format: yolo_obb
+  root: data/prepared/stonebench
+  split_key: val
+  class_names:
+    0: stone
+  manifest: data/manifests/datasets.csv
+  splits: data/manifests/splits.json
+  checksums: data/manifests/checksums.json
+
+metrics:
+  summary:
+    enabled: true
+    confidence_threshold: 0.25
+  obb:
+    enabled: true
+    confidence_threshold: 0.25
+    class_aware: true
+    iou_thresholds: [0.50, 0.75]
+  coco:
+    enabled: false

@@ -1,0 +1,19 @@
+model:
+  family: yolo-obb
+  model_id: yolo11x-obb.pt
+  label_format: yolo_obb
+training:
+  epochs: 30
+  imgsz: 1024
+  batch: 4
+  seed: 42
+  patience: 10
+  amp: true
+  device: cuda
+data:
+  prepared_root: data/prepared/stonebench/yolo_obb
+  scope: combined
+  combined_slug: all_real_plus_synthetic_train
+  synthetic_train_only: true
+output:
+  root: outputs/supervised_benchmark/yolo11x_obb

@@ -1,0 +1,10 @@
+{
+  "seed": 42,
+  "val_fraction": 0.2,
+  "policy": {
+    "default": "Preserve source train/val/test files when they are available.",
+    "resplit": "Use a deterministic seed-42 split for supervised benchmark preparation when --split-mode resplit is selected.",
+    "combined": "Real domains form the validation and evaluation splits; synthetic images are used only for training in the combined supervised split."
+  },
+  "datasets": {}
+}

@@ -1,0 +1,11 @@
+model:
+  name: grounding-dino-sam-obb
+  model_id: IDEA-Research/grounding-dino-base
+  sam_model_id: facebook/sam2.1-hiera-large
+  sam_weights: weights/sam2.1_hiera_large.pt
+  device: cuda
+  labels: ["stone", "rock", "rock fragment", "stone fragment", "gravel", "ore fragment", "aggregate"]
+  confidence_threshold: 0.20
+  mask_refinement: true
+output:
+  root: results/predictions/groundingdino_b_sam21_l

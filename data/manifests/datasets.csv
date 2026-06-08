@@ -1,0 +1,13 @@
+stage,dataset_slug,dataset_name,own,images,instances_per_image,resolution,source,annotation
+I,open_pits,Open pits,true,253,185,2592x2048,https://data.mendeley.com/datasets/v9grvgsrh9/1,Manual
+I,rocks_asbest,Rocks asbest,true,715,57,2592x2048,https://data.mendeley.com/datasets/v9grvgsrh9/1,Auto SAM
+I,rocks_uav,Rocks UAV,true,20,414,5472x3648,https://data.mendeley.com/datasets/v9grvgsrh9/1,Auto SAM
+I,rock_blasting,Rock blasting,false,226,223,1386x2847,https://data.mendeley.com/datasets/z78ghz96bn/1,Manual
+I,mask_2018,Mask 2018,false,960,65,512x512,https://data.mendeley.com/datasets/78ht3pjsr4/1,Manual
+II,bucket_excavation,Bucket excavation,true,316,242,1920x1080,https://data.mendeley.com/datasets/v9grvgsrh9/1,Auto + Manual
+III,40_70mm,40-70 mm,true,49,1130,2592x1944,https://data.mendeley.com/datasets/v9grvgsrh9/1,Auto SAM
+III,unloading_wagon,Unloading a wagon,true,42,190,1400x880,https://data.mendeley.com/datasets/v9grvgsrh9/1,Auto SAM
+IV,transport,Transport,true,134,13,2592x2048,https://data.mendeley.com/datasets/v9grvgsrh9/1,Manual
+IV,ronveer,Ronveer,false,100,41,1920x1920,https://universe.roboflow.com/ghv/ngb,Auto SAM
+V,sam_fragment_v7,SAM fragment v7,false,105,118,512x512,https://universe.roboflow.com/sam-fragment/sam-fragment,Manual
+V,synthetic,Synthetic,true,1603,59,640x640,https://universe.roboflow.com/urfu-uavlq/stone_gen_new_segmentation/dataset/1,Auto

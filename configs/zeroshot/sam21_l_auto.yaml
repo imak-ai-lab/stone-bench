@@ -1,0 +1,12 @@
+model:
+  name: sam-obb
+  model_id: facebook/sam2.1-hiera-large
+  weights: weights/sam2.1_hiera_large.pt
+  device: cuda
+  image_size: 1024
+  confidence_threshold: 0.20
+  iou_threshold: 0.70
+  retina_masks: true
+  max_detections: 5000
+output:
+  root: results/predictions/sam21_l_auto

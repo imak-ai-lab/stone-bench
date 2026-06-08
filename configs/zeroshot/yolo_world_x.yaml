@@ -1,0 +1,11 @@
+model:
+  name: yolo-world-obb
+  model_id: yolov8x-worldv2.pt
+  device: cuda
+  labels: ["stone", "rock", "rock fragment", "stone fragment", "gravel", "ore fragment", "aggregate"]
+  image_size: 1536
+  confidence_threshold: 0.05
+  max_detections: 5000
+  iou_threshold: 0.70
+output:
+  root: results/predictions/yolo_world_x

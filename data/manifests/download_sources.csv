@@ -1,0 +1,7 @@
+dataset_slug,dataset_name,provider,article_url,dataset_id,version,roboflow_workspace,roboflow_project,roboflow_version,roboflow_format,output_name,note
+stonebench_mendeley,StoneBench Mendeley release,mendeley,https://data.mendeley.com/datasets/v9grvgsrh9/1,v9grvgsrh9,1,,,,,stonebench_mendeley_v1.zip,Own datasets introduced in the paper; one Mendeley archive covers several dataset rows.
+rock_blasting,Rock blasting,mendeley,https://data.mendeley.com/datasets/z78ghz96bn/1,z78ghz96bn,1,,,,,rock_blasting_mendeley_v1.zip,Public Mendeley dataset from the article.
+mask_2018,Mask 2018,mendeley,https://data.mendeley.com/datasets/78ht3pjsr4/1,78ht3pjsr4,1,,,,,mask_2018_mendeley_v1.zip,Public Mendeley dataset from the article.
+ronveer,Ronveer,roboflow,https://universe.roboflow.com/ghv/ngb,,,ghv,ngb,,yolov8,ronveer_roboflow.zip,Article URL has no explicit dataset version; pass --roboflow-version ronveer=N.
+sam_fragment_v7,SAM fragment v7,roboflow,https://universe.roboflow.com/sam-fragment/sam-fragment,,,sam-fragment,sam-fragment,7,yolov8,sam_fragment_v7_roboflow.zip,Paper table uses version 7.
+synthetic,Synthetic,roboflow,https://universe.roboflow.com/urfu-uavlq/stone_gen_new_segmentation/dataset/1,,,urfu-uavlq,stone_gen_new_segmentation,1,yolov8,synthetic_roboflow_v1.zip,Article URL explicitly points to dataset version 1.

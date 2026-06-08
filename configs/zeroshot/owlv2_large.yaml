@@ -1,0 +1,9 @@
+model:
+  name: owlv2-obb
+  model_id: google/owlv2-large-patch14-ensemble
+  device: cuda
+  labels: ["stone"]
+  confidence_threshold: 0.20
+  output_label: stone
+output:
+  root: results/predictions/owlv2_large

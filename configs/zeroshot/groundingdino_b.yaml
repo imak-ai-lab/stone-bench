@@ -1,0 +1,8 @@
+model:
+  name: grounding-dino-obb
+  model_id: IDEA-Research/grounding-dino-base
+  device: cuda
+  labels: ["stone", "rock", "rock fragment", "stone fragment", "gravel", "ore fragment", "aggregate"]
+  confidence_threshold: 0.20
+output:
+  root: results/predictions/groundingdino_b

@@ -1,0 +1,66 @@
+{
+  "tables": [
+    {
+      "table": "zero_shot_leaderboard.csv",
+      "columns": [
+        "model",
+        "precision_iou50",
+        "recall_iou50",
+        "f1_iou50",
+        "f1_iou75",
+        "predictions",
+        "time_min"
+      ],
+      "rows": 8
+    },
+    {
+      "table": "zero_shot_per_dataset.csv",
+      "columns": [
+        "dataset",
+        "sam_auto",
+        "tiled_owlv2_sam",
+        "owlv2_large",
+        "yoloe",
+        "yolo_world",
+        "qwen25_vl"
+      ],
+      "rows": 11
+    },
+    {
+      "table": "supervised_per_dataset.csv",
+      "columns": [
+        "dataset",
+        "yolo11x_obb_map50",
+        "yolo11x_obb_map50_95",
+        "yolo11x_obb_f1",
+        "rtdetr_x_map50",
+        "rtdetr_x_map50_95",
+        "rtdetr_x_f1"
+      ],
+      "rows": 11
+    },
+    {
+      "table": "tiling_ablation.csv",
+      "columns": [
+        "model_overlap",
+        "map50",
+        "map50_95",
+        "f1",
+        "cost"
+      ],
+      "rows": 4
+    },
+    {
+      "table": "size_distribution_metrics.csv",
+      "columns": [
+        "model",
+        "cdf_rmse",
+        "ks",
+        "w1",
+        "d80_mm",
+        "missed_small"
+      ],
+      "rows": 8
+    }
+  ]
+}
