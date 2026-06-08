@@ -3,10 +3,18 @@
 The source links from the paper are captured in `download_sources.csv`.
 
 ```bash
-python scripts/download_data.py --dry-run
+python scripts/download_data.py --provider mendeley --dry-run
+python scripts/download_data.py \
+  --provider roboflow \
+  --api-key <roboflow-api-key> \
+  --roboflow-version ronveer=1 \
+  --dry-run
 python scripts/download_data.py --provider mendeley --dry-run --open-browser
-python scripts/download_data.py --provider mendeley --mendeley-manual-dir "%USERPROFILE%\Downloads"
-python scripts/download_data.py --provider roboflow --api-key <roboflow-api-key> --roboflow-version ronveer=1
+python scripts/download_data.py --provider mendeley --mendeley-manual-dir <download-dir>
+python scripts/download_data.py \
+  --provider roboflow \
+  --api-key <roboflow-api-key> \
+  --roboflow-version ronveer=1
 ```
 
 Mendeley sources use a browser download flow: open the source page, download the
