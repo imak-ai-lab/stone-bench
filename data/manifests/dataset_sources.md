@@ -1,41 +1,19 @@
-# Dataset Sources
+# Dataset sources
 
-The source links from the paper are captured in `download_sources.csv`.
+These links are exactly the sources cited in the article. Dataset descriptions
+are in `datasets.csv`; machine-readable source details are in `download_sources.csv`.
 
-```bash
-python scripts/download_data.py --provider mendeley --dry-run
-python scripts/download_data.py \
-  --provider roboflow \
-  --api-key <roboflow-api-key> \
-  --roboflow-version ronveer=1 \
-  --dry-run
-python scripts/download_data.py --provider mendeley --dry-run --open-browser
-python scripts/download_data.py --provider mendeley --mendeley-manual-dir <download-dir>
-python scripts/download_data.py \
-  --provider roboflow \
-  --api-key <roboflow-api-key> \
-  --roboflow-version ronveer=1
-```
+| Datasets | Article source |
+|---|---|
+| Open pits, Rocks asbest, Rocks UAV, Bucket excavation, 40-70 mm, Unloading a wagon, Transport | [Mendeley v1](https://data.mendeley.com/datasets/v9grvgsrh9/1) |
+| Rock blasting | [Mendeley v1](https://data.mendeley.com/datasets/z78ghz96bn/1) |
+| Mask 2018 | [Mendeley v1](https://data.mendeley.com/datasets/78ht3pjsr4/1) |
+| Ronveer | [Roboflow](https://universe.roboflow.com/ghv/ngb) |
+| SAM fragment v7 | [Roboflow](https://universe.roboflow.com/sam-fragment/sam-fragment) |
+| Synthetic | [Roboflow v1](https://universe.roboflow.com/urfu-uavlq/stone_gen_new_segmentation/dataset/1) |
 
-Mendeley sources use a browser download flow: open the source page, download the
-archive, and rename it to the `output_name` from `download_sources.csv` before
-copying it through `--mendeley-manual-dir`.
-
-Roboflow exports require an API key. The Ronveer project page does not contain a
-pinned dataset version in the URL, so the version is supplied with
-`--roboflow-version`.
-
-| Dataset | Source | Archive |
-|---|---|---|
-| Open pits | Mendeley `v9grvgsrh9/1` | `stonebench_mendeley_v1.zip` |
-| Rocks asbest | Mendeley `v9grvgsrh9/1` | `stonebench_mendeley_v1.zip` |
-| Rocks UAV | Mendeley `v9grvgsrh9/1` | `stonebench_mendeley_v1.zip` |
-| Rock blasting | Mendeley `z78ghz96bn/1` | `rock_blasting_mendeley_v1.zip` |
-| Mask 2018 | Mendeley `78ht3pjsr4/1` | `mask_2018_mendeley_v1.zip` |
-| Bucket excavation | Mendeley `v9grvgsrh9/1` | `stonebench_mendeley_v1.zip` |
-| 40-70 mm | Mendeley `v9grvgsrh9/1` | `stonebench_mendeley_v1.zip` |
-| Unloading a wagon | Mendeley `v9grvgsrh9/1` | `stonebench_mendeley_v1.zip` |
-| Transport | Mendeley `v9grvgsrh9/1` | `stonebench_mendeley_v1.zip` |
-| Ronveer | Roboflow `ghv/ngb` | `ronveer_roboflow.zip` |
-| SAM fragment v7 | Roboflow `sam-fragment/sam-fragment` | `sam_fragment_v7_roboflow.zip` |
-| Synthetic | Roboflow `urfu-uavlq/stone_gen_new_segmentation/dataset/1` | `synthetic_roboflow_v1.zip` |
+Download the required images from the source page. Roboflow exports may require
+an account; record the export version (the Ronveer article URL does not pin one).
+The demo automatically downloads one Transport image. To evaluate on real labels,
+follow [data preparation](../../docs/data_export.md) using the bundled annotations
+and frozen split.

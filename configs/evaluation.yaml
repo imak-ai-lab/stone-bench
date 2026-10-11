@@ -1,0 +1,31 @@
+schema_version: 1
+
+dataset:
+  root: data/prepared/frozen
+  predictions: outputs/predictions
+  split: val
+
+detection:
+  output: results/metrics/detection_metrics.csv
+  confidence_threshold: 0.30
+  operating_point_policy: paper_zero_shot_0.30_override_0.25_for_supervised
+  class_aware: false
+  matching: greedy_prediction_score_descending
+  geometry: polygon_iou
+  iou_thresholds: [0.50, 0.75]
+
+granulometry:
+  output: results/metrics/size_distribution_metrics.csv
+  confidence_threshold: 0.30
+  match_iou_threshold: 0.50
+  size_definition: equivalent_circle_diameter_from_polygon_area
+  default_mm_per_px: 1.0
+  scale_csv: ""
+  small_fragment_definition: ground_truth_p10
+
+uncertainty:
+  method: nonparametric_cluster_bootstrap
+  resampling_unit: image
+  samples: 2000
+  confidence_level: 0.95
+  seed: 42

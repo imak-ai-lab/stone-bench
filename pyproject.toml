@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "stone-bench"
 version = "0.1.0"
-description = "Local benchmark toolkit for rock-fragment detection and granulometric evaluation."
+description = "StoneBench paper companion: lightweight detection demo and granulometric evaluation."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -17,21 +17,12 @@ dependencies = [
 
 [project.optional-dependencies]
 yolo = [
-    "ultralytics>=8.3.0",
+    "numpy==1.26.4",
+    "opencv-python==4.11.0.86",
+    "ultralytics==8.4.135",
+    "torch==2.5.1",
+    "torchvision==0.20.1",
 ]
-foundation = [
-    "torch>=2.1",
-    "torchvision>=0.16",
-    "transformers>=4.44",
-]
-vlm = [
-    "accelerate>=0.33",
-    "qwen-vl-utils>=0.0.8",
-]
-
-[project.scripts]
-stone-bench = "stones_fragmentation.cli:main"
-stones-fragmentation = "stones_fragmentation.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

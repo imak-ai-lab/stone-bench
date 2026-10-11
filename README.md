@@ -1,136 +1,113 @@
 # StoneBench
 
-StoneBench is a local toolkit for rock-fragment detection experiments across
-multiple stages of the mining lifecycle. The repository contains source
-manifests, data preparation scripts, model run configurations, local supervised
-and tiled pipelines, metric computation, and compact table snapshots.
+Rock-fragment detection and size-distribution evaluation across mining lifecycle
+stages. The demo baselines are YOLO11n-OBB and YOLO11s-OBB, fine-tuned on stones
+with seed 42.
 
-The repository does not include raw datasets, prepared datasets, model weights,
-raw predictions, credentials, or cloud job definitions.
+Companion code for *Are Foundation Models Ready for Rock Fragmentation? A
+Multi-Domain Benchmark Across the Mining Lifecycle*: lightweight inference,
+evaluation tools, frozen annotations and paper tables. The paper's large supervised
+models are YOLO11x-OBB and RT-DETR-X; nano/small provide a lightweight executable
+example and do not reproduce their table scores.
 
-## Install
+## Run the demo
+
+Clone the repository (Git and 64-bit Python 3.12 required):
 
 ```bash
-python -m venv .venv
-python -m pip install -e .
+git clone https://github.com/imak-ai-lab/stone-bench.git
+cd stone-bench
 ```
 
-Optional model backends are grouped by extra:
+Windows PowerShell:
+
+```powershell
+.\demo.ps1
+```
+
+The launcher installs the dependencies into `.venv-demo`, verifies checkpoint
+SHA-256, downloads Transport v1 (72.3 MB) from the exact Mendeley source cited in
+the paper, extracts one fixed image, and runs both baselines on CPU in full-frame
+and tiled modes. Downloaded images stay outside Git. First setup requires internet access and
+several GB of free disk space for the environment; no GPU or API key is required.
+See [demo guide](docs/camera_ready.md) for expected outputs and troubleshooting.
+Use `-Variant nano` or `-Variant small` to select one model; `-Mode full_frame`
+to run without tiling. Supply your own image or directory with `-Source PATH`.
+
+Linux/macOS shell (Windows CPU is the verified platform):
 
 ```bash
+python3.12 -m venv .venv-demo
+source .venv-demo/bin/activate
+python -m pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
 python -m pip install -e ".[yolo]"
-python -m pip install -e ".[foundation]"
-python -m pip install -e ".[vlm]"
+python scripts/download_demo_sample.py
+python scripts/run_demo.py --source data/samples/transport.jpg
 ```
+
+On macOS, omit `--index-url` from the PyTorch installation command. For an existing
+Python 3.11/3.12 environment, skip creation and activation above. On Windows use
+`demo.ps1` or activate with `.\.venv-demo\Scripts\Activate.ps1`.
+
+Checkpoints and their manifest are in `weights/lightweight/`.
+Outputs are in `outputs/demo/{nano,small}/{mode}/`: annotated PNGs,
+`predictions.json` and `run_info.json`. Predictions use original-image coordinates.
+Default confidence: 0.25; tile size: 1024; overlaps: 0/128/256.
+Re-running into a nonempty mode directory is rejected; choose `--output outputs/demo2`
+(PowerShell: `-Output outputs/demo2`).
+
+## Minimal metric example
+
+```bash
+python scripts/metric_example.py
+```
+
+This generates two geometric objects and exercises both evaluation CLIs. Expected:
+perfect predictions give F1 = 1 and zero size errors; missing the smaller object
+gives F1 = 0.666667 and missed-small = 1. CSV/JSON files appear in
+`outputs/metric_example/`. No weights or downloads are needed after base installation.
+These are analytical checks, not measured benchmark results.
 
 ## Data
 
-Dataset sources are listed in `data/manifests/download_sources.csv`.
+[Dataset sources](data/manifests/dataset_sources.md) and
+[download manifest](data/manifests/download_sources.csv) retain the links cited in
+the article. Raw data are stored externally.
+The linked Transport v1 contains images but no instance annotations, so the downloaded
+demo image supports inference only. See [reproduction inputs](docs/reproduction.md)
+for the remaining requirements for numerical reproduction.
+The minimal annotation/configuration bundle is included in Git (7.05 MB);
+see [data restoration and evaluation on Transport](docs/data_export.md).
+
+## Paper results
+
+| Paper table | CSV |
+|---|---|
+| III — Zero-shot detection | [Leaderboard](results/tables/zero_shot_leaderboard.csv) |
+| IV — Zero-shot by dataset | [Per-dataset F1](results/tables/zero_shot_per_dataset.csv) |
+| V — Supervised detection | [Supervised results](results/tables/supervised_per_dataset.csv) |
+| VI — Tiling | [Tiling results](results/tables/tiling_ablation.csv) |
+| VII — Size distributions | [Size metrics](results/tables/size_distribution_metrics.csv) |
+
+Values reproduce the corresponding tables in the submitted article. SD columns
+follow Table VI; W1 and D80 are in pixels.
+
+## Reproduction
+
+See [experiment instructions](docs/reproduction.md) and
+[evaluation protocol](docs/evaluation_protocol.md). The common manifest is
+`data/manifests/unified_split_seed42.json`: 518 evaluation images, 60,287 fragments;
+Synthetic is train-only. Zero-shot F1 confidence is 0.30; supervised F1 uses 0.25.
+The paper reports seeds 42/43/44 and trains tiled models on tiles.
+The nano/small demo uses a fixed checkpoint with optional tiled inference.
+
+Training settings are described in the experiment instructions. The executable
+examples use the included nano/small checkpoints and require no training.
+
+## Checks
 
 ```bash
-python scripts/download_data.py --provider mendeley --dry-run
-python scripts/download_data.py \
-  --provider roboflow \
-  --api-key <roboflow-api-key> \
-  --roboflow-version ronveer=1 \
-  --dry-run
-python scripts/download_data.py --provider mendeley --dry-run --open-browser
-python scripts/download_data.py --provider mendeley --mendeley-manual-dir <download-dir>
-python scripts/download_data.py \
-  --provider roboflow \
-  --api-key <roboflow-api-key> \
-  --roboflow-version ronveer=1
-```
-
-Mendeley archives are handled through the browser flow. Download the ZIP from
-the source page, rename it to the `output_name` listed in the manifest, then run
-the command with `--mendeley-manual-dir`.
-
-Roboflow exports use the official REST export route and require
-a Roboflow API key, passed with `--api-key` or `ROBOFLOW_API_KEY`. The Ronveer
-source page does not pin a dataset version, so pass the version explicitly with
-`--roboflow-version ronveer=N`.
-
-## Preparation
-
-Extract downloaded archives under `data/raw/extracted/<dataset_slug>/` using the
-slugs from `data/manifests/datasets.csv`, then run:
-
-```bash
-python scripts/prepare_data.py --config configs/prepare_data.yaml
-python scripts/prepare_data.py \
-  --config configs/prepare_data.yaml \
-  --split-mode resplit \
-  --formats yolo_obb yolo_detect
-```
-
-The preparer writes these formats under `data/prepared/stonebench/`:
-
-- `yolo_obb` for YOLO OBB training and OBB evaluation.
-- `yolo_detect` for AABB detectors such as RT-DETR-X.
-- `yolo_seg`, `coco_detect`, and `coco_seg` for compatibility workflows.
-
-## Foundation Models
-
-```bash
-python scripts/run_zeroshot.py \
-  --config configs/zeroshot/yolo_world_x.yaml \
-  --dry-run
-python scripts/run_foundational.py --preset main
-python scripts/run_foundation_models.py --child-dry-run
-```
-
-The package includes local run planning for all configured foundation baselines
-and a lightweight YOLO-World execution path for smoke testing. The remaining
-foundation configs are versioned as explicit run specifications, including
-prompts, thresholds, limits, and output layout.
-
-## Supervised And Tiled Runs
-
-```bash
-python scripts/train_supervised.py \
-  --config configs/supervised/yolo11x_obb.yaml \
-  --dry-run
-python scripts/train_supervised.py \
-  --config configs/supervised/rtdetr_x.yaml \
-  --dry-run
-python scripts/run_tiled_inference.py \
-  --config configs/tiling/yolo11x_obb_overlap_0.yaml \
-  --stage plan
-python scripts/run_tiled_inference.py \
-  --config configs/tiling/yolo11x_obb_overlap_0.yaml \
-  --stage prepare
-```
-
-The supervised and tiled scripts are local-first wrappers around prepared data,
-Ultralytics training, tile generation, stitched prediction handling, and
-full-frame evaluation.
-
-## Metrics And Tables
-
-```bash
-python scripts/evaluate_detection.py \
-  --predictions results/predictions \
-  --dataset-root data/prepared/stonebench/yolo_obb
-python scripts/evaluate_granulometry.py \
-  --predictions results/predictions \
-  --dataset-root data/prepared/stonebench/yolo_obb
+python scripts/check_camera_ready.py --scope demo --strict
+python scripts/prepare_reproduction_inputs.py
 python scripts/make_tables.py --output results/tables
-```
-
-`scripts/evaluate_detection.py` applies the unified confidence post-filter and
-greedy polygon-IoU matching. `scripts/evaluate_granulometry.py` computes CDF
-RMSE, KS, Wasserstein-1, D80 absolute error, and missed-small fraction.
-
-Compact table snapshots are stored in `results/tables/`.
-
-## Layout
-
-```text
-configs/        Dataset, zero-shot, supervised, and tiling configs.
-data/           Manifests, split policy, checksums, and optional samples.
-docs/           Dataset, annotation, evaluation, and reproduction notes.
-results/        Committed table snapshots; raw outputs are ignored.
-scripts/        Local CLI entrypoints.
-src/            Python package implementation.
 ```
