@@ -163,11 +163,11 @@ def bootstrap_size_intervals(
     bootstrap_samples: int,
     confidence_level: float,
     bootstrap_seed: int,
-) -> dict[str, dict[str, float]]:
+) -> dict[str, dict[str, Any]]:
     """Vectorized image-cluster bootstrap for large pooled fragment arrays."""
     image_count = len(image_metrics)
     per_image = {
-        name: np.asarray([float(item[name]) for item in image_metrics], dtype=np.float64)
+        name: np.asarray([float(item[name]) if item[name] is not None else np.nan for item in image_metrics], dtype=np.float64)
         for name in ("cdf_rmse", "ks", "w1")
     }
     gt_values, gt_images, gt_matched = size_observation_arrays(image_metrics, "gt")
@@ -181,7 +181,10 @@ def bootstrap_size_intervals(
     ):
         image_weights = np.bincount(indices, minlength=image_count).astype(np.int64)
         for name, values in per_image.items():
-            estimates[name].append(float(np.dot(image_weights, values) / image_count))
+            selected = image_weights > 0
+            value = float(np.dot(image_weights[selected], values[selected]) / image_count)
+            if math.isfinite(value):
+                estimates[name].append(value)
         d80_gt = weighted_percentile(gt_values, gt_images, image_weights, 0.80)
         d80_pred = weighted_percentile(pred_values, pred_images, image_weights, 0.80)
         if d80_gt is not None and d80_pred is not None:
@@ -199,7 +202,12 @@ def bootstrap_size_intervals(
                 1.0 - evaluate_detection.safe_divide(matched, total)
             )
     return {
-        "%s_ci" % name: evaluate_detection.confidence_interval(values, confidence_level)
+        "%s_ci" % name: {
+            **(evaluate_detection.confidence_interval(values, confidence_level)
+               if len(values) == bootstrap_samples and values
+               else {"low": None, "high": None}),
+            "valid_samples": len(values),
+        }
         for name, values in estimates.items()
     }
 
@@ -414,7 +422,9 @@ def aggregate_size_records(image_metrics: Sequence[dict[str, Any]]) -> dict[str,
         "pred_count": len(all_pred),
         "cdf_rmse": mean([item["cdf_rmse"] for item in image_metrics]),
         "ks": mean([item["ks"] for item in image_metrics]),
-        "w1": mean([item["w1"] for item in image_metrics]),
+        "w1": (mean([item["w1"] for item in image_metrics])
+               if all(item["w1"] is not None for item in image_metrics) else None),
+        "w1_valid_images": sum(item["w1"] is not None for item in image_metrics),
         "d80_gt": d80_gt,
         "d10_gt": small_threshold,
         "d10_pred": d10_pred,
@@ -450,12 +460,10 @@ def ks_distance(left: Sequence[float], right: Sequence[float]) -> float:
     return max(abs(empirical_cdf(left, value) - empirical_cdf(right, value)) for value in grid)
 
 
-def wasserstein_1(left: Sequence[float], right: Sequence[float]) -> float:
-    if not left and not right:
-        return 0.0
+def wasserstein_1(left: Sequence[float], right: Sequence[float]) -> float | None:
+    """W1 requires two nonempty empirical probability distributions."""
     if not left or not right:
-        non_empty = list(left or right)
-        return max(non_empty) - min(non_empty) if non_empty else 0.0
+        return None
     grid = sorted(set(float(value) for value in list(left) + list(right)))
     if len(grid) < 2:
         return 0.0
@@ -545,6 +553,7 @@ def flatten_result(result: dict[str, Any]) -> dict[str, Any]:
         "cdf_rmse": result["cdf_rmse"],
         "ks": result["ks"],
         "w1": result["w1"],
+        "w1_valid_images": result["w1_valid_images"],
         "d80_gt": result["d80_gt"],
         "d10_gt": result["d10_gt"],
         "d10_pred": result["d10_pred"],
@@ -566,6 +575,7 @@ def flatten_result(result: dict[str, Any]) -> dict[str, Any]:
         if interval:
             row["%s_ci_low" % metric_name] = interval["low"]
             row["%s_ci_high" % metric_name] = interval["high"]
+            row["%s_ci_valid_samples" % metric_name] = interval["valid_samples"]
     return row
 
 

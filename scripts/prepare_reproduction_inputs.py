@@ -143,7 +143,7 @@ def materialize(files, split, images_root, output, datasets):
         directory.mkdir(parents=True, exist_ok=True)
         entry = split['datasets'][slug]
         for name, keys in [('train', entry['train_keys']), ('val', entry['test_keys'])]:
-            (directory / (name + '.txt')).write_text(''.join(key + '\n' for key in keys), encoding='utf-8')
+            (directory / (name + '.txt')).write_text(''.join('./' + key + '\n' for key in keys), encoding='utf-8')
         config = dict(path=directory.as_posix(), train='train.txt', val='val.txt', test='val.txt', names=['stone'])
         (directory / 'data.yaml').write_text(yaml.safe_dump(config, sort_keys=False), encoding='utf-8')
     (output / 'image_manifest.json').write_text(json.dumps(image_manifest, indent=2), encoding='utf-8')

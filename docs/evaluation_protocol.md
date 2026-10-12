@@ -33,3 +33,9 @@ actual image count, hardware, warmup and timing boundary recorded with the run.
 
 The [paper tables](../results/README.md) retain the article's individual-run and
 three-seed reporting. Table VI concerns YOLO tiling; Table VII concerns granulometry.
+
+When either size distribution is empty, W1 is undefined (`null` in JSON,
+blank in CSV). The image-mean W1 is undefined if any image has undefined W1;
+`w1_valid_images` reports coverage. Size bootstrap intervals are undefined if
+any replicate lacks the required distribution, with `valid_samples` recording
+the number of defined replicates. Undefined values are never replaced by zero.
