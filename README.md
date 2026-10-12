@@ -1,113 +1,168 @@
 # StoneBench
 
-Rock-fragment detection and size-distribution evaluation across mining lifecycle
-stages. The demo baselines are YOLO11n-OBB and YOLO11s-OBB, fine-tuned on stones
-with seed 42.
+**A multi-domain benchmark for rock-fragment detection and size-distribution analysis across the mining lifecycle.**
 
-Companion code for *Are Foundation Models Ready for Rock Fragmentation? A
-Multi-Domain Benchmark Across the Mining Lifecycle*: lightweight inference,
-evaluation tools, frozen annotations and paper tables. The paper's large supervised
-models are YOLO11x-OBB and RT-DETR-X; nano/small provide a lightweight executable
-example and do not reproduce their table scores.
+Companion repository for *Are Foundation Models Ready for Rock Fragmentation? A Multi-Domain Benchmark Across the Mining Lifecycle*.
 
-## Run the demo
+[Quick start](#quick-start) · [Data](#data) · [Paper results](#paper-results) · [Documentation](#documentation)
 
-Clone the repository (Git and 64-bit Python 3.12 required):
+## Overview
+
+StoneBench brings together rock-fragment imagery from blast piles, loading,
+haulage, conveyor belts, and synthetic scenes. It provides a common oriented
+bounding box (OBB) representation for evaluating individual fragments and the
+size distributions derived from them.
+
+This repository includes:
+
+- **A ready-to-run demo** with fine-tuned YOLO11n-OBB and YOLO11s-OBB checkpoints.
+- **Detection and size-distribution metrics**, including precision, recall, F1,
+  CDF RMSE, KS, Wasserstein-1, D10/D80 errors, and missed-small fraction.
+- **Frozen annotations and split manifests** for consistent evaluation.
+- **Paper results in CSV format**, with links to dataset sources and protocol details.
+
+## Quick start
+
+The demo runs on CPU and requires no GPU or API key. Use Git and 64-bit Python
+3.12; the Python commands also support an existing Python 3.11 environment.
 
 ```bash
 git clone https://github.com/imak-ai-lab/stone-bench.git
 cd stone-bench
 ```
 
-Windows PowerShell:
+### Windows
 
 ```powershell
 .\demo.ps1
 ```
 
-The launcher installs the dependencies into `.venv-demo`, verifies checkpoint
-SHA-256, downloads Transport v1 (72.3 MB) from the exact Mendeley source cited in
-the paper, extracts one fixed image, and runs both baselines on CPU in full-frame
-and tiled modes. Downloaded images stay outside Git. First setup requires internet access and
-several GB of free disk space for the environment; no GPU or API key is required.
-See [demo guide](docs/camera_ready.md) for expected outputs and troubleshooting.
-Use `-Variant nano` or `-Variant small` to select one model; `-Mode full_frame`
-to run without tiling. Supply your own image or directory with `-Source PATH`.
+The launcher creates an environment, installs dependencies, downloads a sample
+image, and runs both models in full-frame and tiled modes.
 
-Linux/macOS shell (Windows CPU is the verified platform):
+### Linux and macOS
 
 ```bash
 python3.12 -m venv .venv-demo
 source .venv-demo/bin/activate
+```
+
+Install PyTorch on Linux:
+
+```bash
 python -m pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
+```
+
+On macOS:
+
+```bash
+python -m pip install torch==2.5.1 torchvision==0.20.1
+```
+
+Then install StoneBench and run the demo:
+
+```bash
 python -m pip install -e ".[yolo]"
 python scripts/download_demo_sample.py
 python scripts/run_demo.py --source data/samples/transport.jpg
 ```
 
-On macOS, omit `--index-url` from the PyTorch installation command. For an existing
-Python 3.11/3.12 environment, skip creation and activation above. On Windows use
-`demo.ps1` or activate with `.\.venv-demo\Scripts\Activate.ps1`.
+The first run requires internet access and several GB of free disk space.
 
-Checkpoints and their manifest are in `weights/lightweight/`.
-Outputs are in `outputs/demo/{nano,small}/{mode}/`: annotated PNGs,
-`predictions.json` and `run_info.json`. Predictions use original-image coordinates.
-Default confidence: 0.25; tile size: 1024; overlaps: 0/128/256.
-Re-running into a nonempty mode directory is rejected; choose `--output outputs/demo2`
-(PowerShell: `-Output outputs/demo2`).
+### Explore the output
 
-## Minimal metric example
+Each model and inference mode produces an annotated image, `predictions.json`,
+and `run_info.json` under `outputs/demo/`. Predictions use original-image coordinates.
+
+To try your own image or directory in the installed environment:
+
+```bash
+python scripts/run_demo.py --source path/to/images --variant nano --mode full_frame --output outputs/my_demo
+```
+
+In Windows PowerShell:
+
+```powershell
+.\demo.ps1 -Source "C:\images\stones.jpg" -Variant nano -Mode full_frame -Output outputs/my_demo
+```
+
+Use a new output directory for each run. See the [demo guide](docs/camera_ready.md)
+for inference options, environment setup, and troubleshooting.
+
+The included nano/small checkpoints are lightweight examples. The paper reports
+YOLO11x-OBB and RT-DETR-X results; those checkpoints are not included in this release.
+
+## Evaluate predictions
+
+After installation, run a small example with known answers:
 
 ```bash
 python scripts/metric_example.py
 ```
 
-This generates two geometric objects and exercises both evaluation CLIs. Expected:
-perfect predictions give F1 = 1 and zero size errors; missing the smaller object
-gives F1 = 0.666667 and missed-small = 1. CSV/JSON files appear in
-`outputs/metric_example/`. No weights or downloads are needed after base installation.
-These are analytical checks, not measured benchmark results.
+The example evaluates perfect predictions and a missed fragment. Expected F1
+scores are **1.0** and **0.666667**, respectively. Results are saved as CSV and JSON
+in `outputs/metric_example/`.
+
+For evaluation on real images, follow the [Transport walkthrough](docs/data_export.md#evaluate-transport).
+The [evaluation protocol](docs/evaluation_protocol.md) defines matching, size metrics,
+confidence thresholds, and bootstrap intervals.
 
 ## Data
 
-[Dataset sources](data/manifests/dataset_sources.md) and
-[download manifest](data/manifests/download_sources.csv) retain the links cited in
-the article. Raw data are stored externally.
-The linked Transport v1 contains images but no instance annotations, so the downloaded
-demo image supports inference only. See [reproduction inputs](docs/reproduction.md)
-for the remaining requirements for numerical reproduction.
-The minimal annotation/configuration bundle is included in Git (7.05 MB);
-see [data restoration and evaluation on Transport](docs/data_export.md).
+Raw images are hosted by the original dataset providers. The repository includes
+a compact annotation bundle with **4,196 OBB label files** and frozen split metadata.
+The common evaluation partition contains **518 images and 60,287 fragments**;
+the generated Synthetic domain is used only for training.
+
+| Resource | Description |
+|---|---|
+| [Dataset sources](data/manifests/dataset_sources.md) | Original datasets and download links |
+| [Download manifest](data/manifests/download_sources.csv) | Source identifiers and dataset versions |
+| [Dataset card](docs/dataset_card.md) | Domains, annotation sources, and limitations |
+| [Data preparation](docs/data_export.md) | Restore annotations, prepare images, and evaluate Transport |
+| [Frozen split](data/manifests/unified_split_seed42.json) | Image keys for training and evaluation |
+
+The demo downloads an image from Transport v1. For evaluation with annotations,
+use the Transport v2 instructions in the data preparation guide.
 
 ## Paper results
 
-| Paper table | CSV |
+The following CSV files contain the values reported in the paper.
+
+| Paper table | Results |
 |---|---|
 | III — Zero-shot detection | [Leaderboard](results/tables/zero_shot_leaderboard.csv) |
 | IV — Zero-shot by dataset | [Per-dataset F1](results/tables/zero_shot_per_dataset.csv) |
 | V — Supervised detection | [Supervised results](results/tables/supervised_per_dataset.csv) |
-| VI — Tiling | [Tiling results](results/tables/tiling_ablation.csv) |
+| VI — Tiling | [Tiling ablation](results/tables/tiling_ablation.csv) |
 | VII — Size distributions | [Size metrics](results/tables/size_distribution_metrics.csv) |
 
-Values reproduce the corresponding tables in the submitted article. SD columns
-follow Table VI; W1 and D80 are in pixels.
+Wasserstein-1 and D80 errors are reported in pixels. See the
+[experiment documentation](docs/reproduction.md) for training settings and the
+relationship between the demo and paper experiments.
 
-## Reproduction
+## Documentation
 
-See [experiment instructions](docs/reproduction.md) and
-[evaluation protocol](docs/evaluation_protocol.md). The common manifest is
-`data/manifests/unified_split_seed42.json`: 518 evaluation images, 60,287 fragments;
-Synthetic is train-only. Zero-shot F1 confidence is 0.30; supervised F1 uses 0.25.
-The paper reports seeds 42/43/44 and trains tiled models on tiles.
-The nano/small demo uses a fixed checkpoint with optional tiled inference.
+| Guide | Contents |
+|---|---|
+| [Demo](docs/camera_ready.md) | Setup, inference modes, outputs, and troubleshooting |
+| [Data preparation](docs/data_export.md) | Annotation validation and dataset preparation |
+| [Annotation format](docs/annotation_format.md) | OBB labels and prediction JSON schema |
+| [Evaluation protocol](docs/evaluation_protocol.md) | Metrics, matching, and uncertainty |
+| [Experiments](docs/reproduction.md) | Paper settings and reproduction inputs |
 
-Training settings are described in the experiment instructions. The executable
-examples use the included nano/small checkpoints and require no training.
-
-## Checks
+To verify the included checkpoints, annotation bundle, and table files:
 
 ```bash
 python scripts/check_camera_ready.py --scope demo --strict
 python scripts/prepare_reproduction_inputs.py
 python scripts/make_tables.py --output results/tables
 ```
+
+The table check validates the saved CSV files; it does not rerun experiments.
+
+## License
+
+Repository code is released under the [MIT License](LICENSE). Refer to the original
+dataset providers for data licensing terms.
