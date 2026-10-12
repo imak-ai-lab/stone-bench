@@ -1,4 +1,6 @@
 .venv/
+.venv-camera-ready/
+.venv-demo/
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -13,7 +15,17 @@ __pycache__/
 *.pt
 *.pth
 *.onnx
-weights/
+*.zip
+*.tar.gz
+!data/reproduction/annotations_seed42.tar.gz
+*.7z
+weights/*
+!weights/lightweight/
+weights/lightweight/*
+!weights/lightweight/README.md
+!weights/lightweight/manifest.json
+!weights/lightweight/stones-yolo11n-obb-seed42.pt
+!weights/lightweight/stones-yolo11s-obb-seed42.pt
 
 data/raw/
 data/prepared/

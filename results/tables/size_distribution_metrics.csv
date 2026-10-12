@@ -1,4 +1,4 @@
-model,cdf_rmse,ks,w1,d80_mm,missed_small
+model,cdf_rmse,ks,w1,d80_px,missed_small
 SAM auto,0.101,0.144,124.847,186.501,1.000
 OWLv2-L,0.210,0.304,58.945,35.130,0.997
 YOLO-World-X,0.221,0.329,538.166,530.245,1.000

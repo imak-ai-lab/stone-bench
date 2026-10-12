@@ -42,9 +42,10 @@ Axis-aligned labels use the standard normalized YOLO format:
 class_id x_center y_center width height
 ```
 
-## Conversion Rules
+## Geometry
 
 - OBB-to-AABB conversion takes the enclosing axis-aligned box of the OBB.
 - AABB-to-OBB conversion uses the zero-rotation rectangle corners.
-- Segmentation polygons are normalized and clipped to image bounds during data preparation.
-- Single-class COCO category IDs are mapped to class `0` for YOLO exports.
+- Bundled labels already contain normalized OBB corners with class `0`.
+- Prediction coordinates are in original-image pixels. Include a record with
+  `"detections": []` for an image with no predictions; missing records are errors.

@@ -44,8 +44,11 @@
       "columns": [
         "model_overlap",
         "map50",
+        "map50_sd",
         "map50_95",
+        "map50_95_sd",
         "f1",
+        "f1_sd",
         "cost"
       ],
       "rows": 4
@@ -57,7 +60,7 @@
         "cdf_rmse",
         "ks",
         "w1",
-        "d80_mm",
+        "d80_px",
         "missed_small"
       ],
       "rows": 8

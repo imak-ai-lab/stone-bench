@@ -1,39 +1,41 @@
-# Evaluation Protocol
+# Evaluation protocol of the submitted paper
 
-## Detection Metrics
+The common evaluation uses `unified_split_seed42.json`: 518 real-domain images and
+60,287 GT instances. Source-image variants are grouped; Synthetic is train-only.
+The split also served as validation and does not guarantee separation by video or
+acquisition session. Do not call it an independent held-out session test.
 
-Reported detection metrics use:
+One class, stone, is evaluated as instances. Mask outputs become minimum-area OBBs;
+AABB outputs become zero-angle OBBs and can be penalized on rotated fragments.
+Score-ordered greedy matching uses the best unmatched GT by polygon IoU.
+Zero-shot confidence is 0.30 with class-agnostic matching; supervised F1 uses 0.25.
+Generation thresholds are distinct from evaluation thresholds. The included
+detection tools report precision/recall/F1 at IoU 0.50 and 0.75. Paper AP requires
+low-cutoff predictions and the corresponding model evaluator.
 
-- unified confidence post-filter at 0.25;
-- greedy per-image matching in descending confidence order;
-- best unmatched ground-truth instance by polygon IoU;
-- precision, recall, and F1 at IoU 0.50 and 0.75;
-- class-aware matching for the `stone` class.
+Training variation is mean plus/minus sample SD over seeds 42/43/44. The public
+metric tools additionally offer deterministic 95% image-cluster bootstrap intervals
+(2000 replicates, seed 42). All fragments of an image are resampled together.
+These are different uncertainties and must not share an unlabeled plus/minus sign.
 
-The implementation is in `src/stones_fragmentation/metrics/detection.py` and
-the CLI entrypoint is `scripts/evaluate_detection.py`.
+Size is `2 * sqrt(OBB_area / pi)`. The size evaluator reports CDF RMSE, KS,
+Wasserstein-1, absolute D10/D80 error, and the fraction of GT fragments below GT P10
+unmatched at IoU 0.50. The submitted Table VII includes D80 and Small, not absolute
+D10. D10 and equal-domain macro-F1 are additional outputs, not published table values.
+At default scale 1, sizes are pixels. No physical calibration is implied. Report
+per-domain results alongside pooled values; differing camera scales restrict pooled
+interpretation. Size distributions count individual instances, not union box area.
 
-## Size-Distribution Metrics
+Paper tiling trains on 1024-pixel tiles, overlap 0/128/256, then shifts predictions
+to full-frame coordinates and applies class-aware NMS at 0.50. Demo center ownership
+and fixed-checkpoint inference-only experiments are separate. Runtime requires the
+actual image count, hardware, warmup and timing boundary recorded with the run.
 
-Operational size-distribution metrics are computed from the same prediction
-geometry:
+The [paper tables](../results/README.md) retain the article's individual-run and
+three-seed reporting. Table VI concerns YOLO tiling; Table VII concerns granulometry.
 
-- CDF RMSE;
-- Kolmogorov-Smirnov distance;
-- Wasserstein-1 distance;
-- absolute D80 error;
-- missed-small fraction below the ground-truth P10 threshold.
-
-The implementation is in `src/stones_fragmentation/metrics/granulometry.py` and
-the CLI entrypoint is `scripts/evaluate_granulometry.py`.
-
-## Tiled Evaluation
-
-Tiled supervised evaluation uses the following policy:
-
-- train on generated tiles;
-- shift tile predictions back to full-image coordinates;
-- merge stitched predictions with class-aware NMS;
-- evaluate on original full frames rather than on tile crops.
-
-The local pipeline entrypoint is `scripts/run_tiled_inference.py`.
+When either size distribution is empty, W1 is undefined (`null` in JSON,
+blank in CSV). The image-mean W1 is undefined if any image has undefined W1;
+`w1_valid_images` reports coverage. Size bootstrap intervals are undefined if
+any replicate lacks the required distribution, with `valid_samples` recording
+the number of defined replicates. Undefined values are never replaced by zero.

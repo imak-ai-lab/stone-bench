@@ -1,0 +1,48 @@
+{
+  "checkpoints": [
+    {
+      "variant": "nano",
+      "architecture": "yolo11n-obb.pt",
+      "file": "stones-yolo11n-obb-seed42.pt",
+      "bytes": 5695932,
+      "sha256": "d2f4271dce60c9df287873d7228f1b816cc0365c46c21ed75613b7ee0b86b119",
+      "training_seed": 42,
+      "split_seed": 42,
+      "evaluation_split": {
+        "protocol_id": "stonebench-unified-test-v1-seed42",
+        "split_seed": 42,
+        "split_manifest_sha256": "7929088b27fc82b8080ac4a715c2c5c7f2d80f35530849c87960c5e339495f4f",
+        "test_images": 518,
+        "test_keys_sha256": "580139f0829f76258fa84372003bbda2b0834872290cfe3eab53e82872a80451"
+      },
+      "metrics": {
+        "map50": 0.7843488227310832,
+        "map50_95": 0.5134796348169244,
+        "f1_iou50": 0.7118683390125425
+      },
+      "source_result": "yolo11n-obb/all_real_plus_synthetic_train/yolo-obb/obb/all_real_plus_synthetic_train-yolo11n-obb-pt/result.json"
+    },
+    {
+      "variant": "small",
+      "architecture": "yolo11s-obb.pt",
+      "file": "stones-yolo11s-obb-seed42.pt",
+      "bytes": 19829692,
+      "sha256": "11ba36375c469a6487d3d3b0c220f585b5178b974edb05ba95694598253f8627",
+      "training_seed": 42,
+      "split_seed": 42,
+      "evaluation_split": {
+        "protocol_id": "stonebench-unified-test-v1-seed42",
+        "split_seed": 42,
+        "split_manifest_sha256": "7929088b27fc82b8080ac4a715c2c5c7f2d80f35530849c87960c5e339495f4f",
+        "test_images": 518,
+        "test_keys_sha256": "580139f0829f76258fa84372003bbda2b0834872290cfe3eab53e82872a80451"
+      },
+      "metrics": {
+        "map50": 0.8121448981543513,
+        "map50_95": 0.5574084216426515,
+        "f1_iou50": 0.7466018476404931
+      },
+      "source_result": "yolo11s-obb/all_real_plus_synthetic_train/yolo-obb/obb/all_real_plus_synthetic_train-yolo11s-obb-pt/result.json"
+    }
+  ]
+}
