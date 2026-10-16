@@ -4,6 +4,10 @@
 
 Companion repository for *Are Foundation Models Ready for Rock Fragmentation? A Multi-Domain Benchmark Across the Mining Lifecycle*.
 
+### Authors
+
+Ilya Bolkisev · Vasilii Trabun · Kirill Reshetnikov · Artem Sorokin · Mikhail Ronkin · Aleksandr Kovalenko · Ilya Makarov
+
 [Quick start](#quick-start) · [Data](#data) · [Paper results](#paper-results) · [Documentation](#documentation)
 
 ## Overview
